@@ -32,6 +32,7 @@ import CloudDatabaseForm from '../components/cloud-database-form/cloud-database-
 import CloudNetworkForm from '../components/cloud-network-form/cloud-network-form';
 import CloudObjectStoreContainerForm from '../components/cloud-object-store-container-form';
 import CloudTenantForm from '../components/cloud-tenant-form';
+import CloudTenantQuotaGauges from '../components/cloud-tenant-quota-gauges';
 import CloudVolumeActions from '../components/cloud-volume-actions-form';
 import CloudVolumeBackupForm from '../components/cloud-volume-backup-form';
 import CloudVolumeForm from '../components/cloud-volume-form';
@@ -212,6 +213,7 @@ ManageIQ.component.addReact('CloudDatabaseForm', CloudDatabaseForm);
 ManageIQ.component.addReact('CloudNetworkForm', CloudNetworkForm);
 ManageIQ.component.addReact('CloudObjectStoreContainerForm', CloudObjectStoreContainerForm);
 ManageIQ.component.addReact('CloudTenantForm', CloudTenantForm);
+ManageIQ.component.addReact('CloudTenantQuotaGauges', CloudTenantQuotaGauges);
 ManageIQ.component.addReact('CloudVolumeActions', CloudVolumeActions);
 ManageIQ.component.addReact('CloudVolumeBackupForm', CloudVolumeBackupForm);
 ManageIQ.component.addReact('CloudVolumeForm', CloudVolumeForm);

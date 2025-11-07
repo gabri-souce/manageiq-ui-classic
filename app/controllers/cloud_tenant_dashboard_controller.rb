@@ -3,7 +3,7 @@ class CloudTenantDashboardController < ApplicationController
 
   before_action :check_privileges
   before_action :get_session_data
-  before_action :get_tenant, :only => %i[data recent_instances_data recent_images_data aggregate_status_data]
+  before_action :get_tenant, :only => %i[data recent_instances_data recent_images_data aggregate_status_data quota_data]
   after_action :cleanup_action
   after_action :set_session_data
 
@@ -27,6 +27,11 @@ class CloudTenantDashboardController < ApplicationController
     render :json => {:data => aggregate_status}
   end
 
+  def quota_data
+    assert_privileges('ems_cloud_view')
+    render :json => {:data => quota}
+  end
+
   private
 
   def collect_data
@@ -43,6 +48,10 @@ class CloudTenantDashboardController < ApplicationController
 
   def aggregate_status
     CloudTenantDashboardService.new(@tenant, self, CloudTenant).aggregate_status_data
+  end
+
+  def quota
+    CloudTenantDashboardService.new(@tenant, self, CloudTenant).quota_data
   end
 
   def get_session_data

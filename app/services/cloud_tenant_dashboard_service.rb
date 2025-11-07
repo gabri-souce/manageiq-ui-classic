@@ -108,4 +108,60 @@ class CloudTenantDashboardService < DashboardService
             .group(group_by_sql.to_sql)
             .count
   end
+
+  def quota_data
+    quota_metrics = [
+      { :service => 'compute', :name => 'ram', :label => _('RAM'), :units => 'MB' },
+      { :service => 'compute', :name => 'cores', :label => _('Cores'), :units => _('Cores') },
+      { :service => 'compute', :name => 'instances', :label => _('Instances'), :units => _('Instances') },
+      { :service => 'cinder', :name => 'volumes', :label => _('Volumes'), :units => _('Volumes') },
+      { :service => 'cinder', :name => 'gigabytes', :label => _('Gigabytes'), :units => 'GB' }
+    ]
+
+    quotas = quota_metrics.map do |metric|
+      quota = CloudResourceQuota.find_by(
+        :cloud_tenant_id => @record_id,
+        :service_name    => metric[:service],
+        :name            => metric[:name]
+      )
+
+      if quota
+        value = quota.value.to_i
+        used = quota.used.to_i
+
+        # Convert RAM from MB to GB for better readability
+        if metric[:name] == 'ram'
+          value = value / 1024.0 if value > 0
+          used = used / 1024.0 if used >= 0
+          units = 'GB'
+        else
+          units = metric[:units]
+        end
+
+        {
+          :resource        => metric[:label],
+          :name            => metric[:name],
+          :quota_total     => value < 0 ? -1 : value.round(2),
+          :quota_used      => used < 0 ? 0 : used.round(2),
+          :quota_available => value < 0 ? -1 : (value - used).round(2),
+          :units           => units,
+          :unlimited       => value < 0
+        }
+      else
+        # Return placeholder if quota not found
+        {
+          :resource        => metric[:label],
+          :name            => metric[:name],
+          :quota_total     => 0,
+          :quota_used      => 0,
+          :quota_available => 0,
+          :units           => metric[:units],
+          :unlimited       => false,
+          :not_available   => true
+        }
+      end
+    end
+
+    { :quotas => quotas }
+  end
 end
