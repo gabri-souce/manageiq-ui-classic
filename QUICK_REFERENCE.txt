@@ -1,0 +1,76 @@
+═══════════════════════════════════════════════════════════════════════════════
+  CLOUD TENANT QUOTA GAUGES - QUICK REFERENCE
+═══════════════════════════════════════════════════════════════════════════════
+
+📦 COPY FILES TO SERVER
+────────────────────────────────────────────────────────────────────────────────
+scp compile-quota-gauges.sh your-user@your-server:~/
+scp quota-plugin-files.tar.gz your-user@your-server:~/
+
+🚀 DEPLOY TO CONTAINER
+────────────────────────────────────────────────────────────────────────────────
+podman cp ~/compile-quota-gauges.sh manageiq-debug-vol_patch:/opt/manageiq/manageiq-gemset/bundler/gems/manageiq-ui-classic-baf2db024bef/
+podman cp ~/quota-plugin-files.tar.gz manageiq-debug-vol_patch:/tmp/
+podman exec manageiq-debug-vol_patch tar xzf /tmp/quota-plugin-files.tar.gz -C /opt/manageiq/manageiq-gemset/bundler/gems/manageiq-ui-classic-baf2db024bef
+
+⚙️  COMPILE (AUTOMATED)
+────────────────────────────────────────────────────────────────────────────────
+podman exec -it manageiq-debug-vol_patch bash
+cd /opt/manageiq/manageiq-gemset/bundler/gems/manageiq-ui-classic-baf2db024bef
+./compile-quota-gauges.sh
+exit
+
+⚙️  COMPILE (MANUAL)
+────────────────────────────────────────────────────────────────────────────────
+podman exec -it manageiq-debug-vol_patch bash
+cd /opt/manageiq/manageiq-gemset/bundler/gems/manageiq-ui-classic-baf2db024bef
+NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=production ./bin/webpack
+exit
+
+🔄 RESTART MANAGEIQ
+────────────────────────────────────────────────────────────────────────────────
+podman restart manageiq-debug-vol_patch
+podman logs -f manageiq-debug-vol_patch
+(Wait for: "Listening on http://0.0.0.0:3000" then Ctrl+C)
+
+🌐 ACCESS WEB UI
+────────────────────────────────────────────────────────────────────────────────
+URL: http://your-server-ip:3000
+Path: Compute → Clouds → Tenants → [Select Tenant] → Dashboard tab
+
+✅ VERIFY
+────────────────────────────────────────────────────────────────────────────────
+# Check compiled files exist
+podman exec manageiq-debug-vol_patch ls -la /opt/manageiq/manageiq-gemset/bundler/gems/manageiq-ui-classic-baf2db024bef/public/packs/component-definitions-common-*.js
+
+# Check for errors
+podman logs manageiq-debug-vol_patch | grep -i error
+
+# Check plugin files
+podman exec manageiq-debug-vol_patch ls -la /opt/manageiq/manageiq-gemset/bundler/gems/manageiq-ui-classic-baf2db024bef/app/javascript/components/cloud-tenant-quota-gauges/
+
+🐛 TROUBLESHOOTING
+────────────────────────────────────────────────────────────────────────────────
+# Reinstall dependencies (if babel-loader error)
+podman exec -it manageiq-debug-vol_patch bash
+cd /opt/manageiq/manageiq-gemset/bundler/gems/manageiq-ui-classic-baf2db024bef
+yarn install --check-files
+exit
+
+# Clear webpack cache
+podman exec manageiq-debug-vol_patch rm -rf /opt/manageiq/manageiq-gemset/bundler/gems/manageiq-ui-classic-baf2db024bef/tmp/cache/webpacker/*
+
+# View browser console errors
+Open browser → F12 → Console tab
+
+📚 DOCUMENTATION
+────────────────────────────────────────────────────────────────────────────────
+FINAL_STEPS.md              - Complete deployment guide
+COMPILE_IN_CONTAINER.md     - Detailed compilation instructions
+INSTALL_QUOTA_PLUGIN.md     - Plugin installation guide for colleagues
+cloud-tenant-quota-gauges/README.md - Technical documentation
+
+═══════════════════════════════════════════════════════════════════════════════
+  EXPECTED OUTPUT: 5 gauge cards showing RAM, Cores, Instances, Volumes, GB
+  STATUS COLORS: Green (<75%), Orange (75-90%), Red (>90%)
+═══════════════════════════════════════════════════════════════════════════════
