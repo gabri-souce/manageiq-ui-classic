@@ -10,19 +10,44 @@ const StackAreaChart = ({ data, title }) => {
         stacked: true,
         scaleType: 'linear',
         mapsTo: 'value',
+        title: '',
       },
       bottom: {
         scaleType: 'linear',
         mapsTo: 'key',
+        title: '',
       },
+    },
+    grid: {
+      x: {
+        enabled: true,
+      },
+      y: {
+        enabled: true,
+      },
+    },
+    legend: {
+      enabled: true,
+      position: 'bottom',
+      clickable: true,
     },
     curve: 'curveMonotoneX',
     height: '400px',
     tooltip: {
+      enabled: true,
+      showTotal: true,
+      valueFormatter: (value) => value.toLocaleString(),
       truncation: {
         type: 'none',
       },
     },
+    toolbar: {
+      enabled: false,
+    },
+    color: {
+      scale: null,
+    },
+    animations: true,
   };
 
   return (

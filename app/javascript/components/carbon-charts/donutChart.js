@@ -8,15 +8,33 @@ const DonutChartGraph = ({ data, title }) => {
     donut: {
       center: {
         label: __('Total'),
+        numberFormatter: (value) => value.toLocaleString(),
+      },
+      alignment: 'center',
+    },
+    legend: {
+      enabled: true,
+      position: 'bottom',
+      clickable: true,
+      truncation: {
+        type: 'mid_line',
+        threshold: 15,
+        numCharacter: 12,
       },
     },
     height: '400px',
     resizable: true,
     tooltip: {
+      enabled: true,
+      valueFormatter: (value) => value.toLocaleString(),
       truncation: {
         type: 'none',
       },
     },
+    color: {
+      scale: null,
+    },
+    animations: true,
   };
 
   return (

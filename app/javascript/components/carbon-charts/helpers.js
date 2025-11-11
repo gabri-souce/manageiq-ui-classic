@@ -1,3 +1,70 @@
+// ===== Utility Functions =====
+
+/**
+ * Format numbers with locale-specific thousand separators and decimals
+ * @param {number} value - The number to format
+ * @param {number} decimals - Number of decimal places (default: 0)
+ * @returns {string} Formatted number string
+ */
+export const formatNumber = (value, decimals = 0) => {
+  if (value == null || isNaN(value)) return '0';
+  return Number(value).toLocaleString(undefined, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+};
+
+/**
+ * Format bytes to human-readable format (KB, MB, GB, etc.)
+ * @param {number} bytes - The bytes value
+ * @param {number} decimals - Number of decimal places (default: 2)
+ * @returns {string} Formatted bytes string
+ */
+export const formatBytes = (bytes, decimals = 2) => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+};
+
+/**
+ * Format percentage values
+ * @param {number} value - The percentage value (0-100)
+ * @param {number} decimals - Number of decimal places (default: 1)
+ * @returns {string} Formatted percentage string
+ */
+export const formatPercentage = (value, decimals = 1) => {
+  if (value == null || isNaN(value)) return '0%';
+  return `${Number(value).toFixed(decimals)}%`;
+};
+
+/**
+ * Get common chart options for consistency across charts
+ * @param {object} customOptions - Custom options to merge with defaults
+ * @returns {object} Chart options object
+ */
+export const getCommonChartOptions = (customOptions = {}) => ({
+  animations: true,
+  toolbar: {
+    enabled: false,
+  },
+  color: {
+    scale: null, // Uses Carbon default color palette
+  },
+  tooltip: {
+    enabled: true,
+    valueFormatter: (value) => formatNumber(value),
+    truncation: {
+      type: 'none',
+    },
+  },
+  ...customOptions,
+});
+
+// ===== Sample Data =====
+
 export const sampleData = [{
   group: 'Dataset 1',
   key: '1',

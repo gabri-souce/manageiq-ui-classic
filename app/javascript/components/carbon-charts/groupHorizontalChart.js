@@ -9,17 +9,45 @@ const GroupHorizontalBarChart = ({ data, title }) => {
       left: {
         scaleType: 'labels',
         mapsTo: 'key',
+        title: '',
       },
       bottom: {
         mapsTo: 'value',
+        scaleType: 'linear',
+        title: '',
       },
+    },
+    grid: {
+      x: {
+        enabled: true,
+      },
+      y: {
+        enabled: false,
+      },
+    },
+    legend: {
+      enabled: true,
+      position: 'bottom',
+      clickable: true,
+    },
+    bars: {
+      maxWidth: 50,
     },
     height: '400px',
     tooltip: {
+      enabled: true,
+      valueFormatter: (value) => value.toLocaleString(),
       truncation: {
         type: 'none',
       },
     },
+    toolbar: {
+      enabled: false,
+    },
+    color: {
+      scale: null,
+    },
+    animations: true,
   };
 
   return (
